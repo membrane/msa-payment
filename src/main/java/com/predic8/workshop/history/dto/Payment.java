@@ -9,6 +9,9 @@ public class Payment {
 	private String customer;
 	private BigDecimal amount;
 
+	public Payment() {
+	}
+
 	public Payment(String customer, BigDecimal amount) {
 		this.customer = customer;
 		this.amount = amount;

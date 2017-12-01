@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 public class PaymentSucceeded {
 	@JsonUnwrapped
-	RatingRequest ratingRequest;
+	private	RatingRequest ratingRequest;
 	@JsonUnwrapped
-	PaymentRequest paymentRequest;
+	private PaymentRequest paymentRequest;
+
+	public PaymentSucceeded() {
+	}
 
 	public PaymentSucceeded(RatingRequest ratingRequest, PaymentRequest paymentRequest) {
 		this.ratingRequest = ratingRequest;
