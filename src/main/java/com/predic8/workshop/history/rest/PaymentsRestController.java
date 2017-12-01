@@ -6,7 +6,6 @@ import com.predic8.workshop.history.dto.PaymentRequest;
 import com.predic8.workshop.history.dto.PaymentSucceeded;
 import com.predic8.workshop.history.dto.RatingRequest;
 import com.predic8.workshop.history.event.Operation;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-@RequiredArgsConstructor
 @RequestMapping("/payments")
 @RestController
 public class PaymentsRestController {
@@ -27,6 +25,13 @@ public class PaymentsRestController {
 	private final Map<String, Payment> payments;
 	private final RestTemplate restTemplate;
 	private final KafkaTemplate<String, Operation> kafkaTemplate;
+
+	public PaymentsRestController(ObjectMapper objectMapper, Map<String, Payment> payments, RestTemplate restTemplate, KafkaTemplate<String, Operation> kafkaTemplate) {
+		this.objectMapper = objectMapper;
+		this.payments = payments;
+		this.restTemplate = restTemplate;
+		this.kafkaTemplate = kafkaTemplate;
+	}
 
 	@GetMapping("/{uuid}")
 	public Payment index(@PathVariable String uuid) {

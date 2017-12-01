@@ -1,12 +1,17 @@
 package com.predic8.workshop.history.dto;
 
-import lombok.Value;
-
 import static com.predic8.workshop.history.dto.PaymentRequest.Method.CC;
 
-@Value
 public class PaymentRequest {
 	Method method = CC;
+
+	public Method getMethod() {
+		return this.method;
+	}
+
+	public String toString() {
+		return "PaymentRequest(method=" + this.getMethod() + ")";
+	}
 
 	enum Method {
 		CC,
