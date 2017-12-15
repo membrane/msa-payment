@@ -42,7 +42,7 @@ public class PaymentsRestController {
 	public ResponseEntity<?> save(@PathVariable String uuid, @RequestBody PaymentRequest paymentRequest) {
 		// what happens if the HTTP call succeeds but sending the event does not?
 		RatingRequest ratingRequest = new RatingRequest(payments.get(uuid).getCustomer(), payments.get(uuid).getAmount());
-		restTemplate.postForEntity("http://rating-service/ratings", ratingRequest, Void.class);
+		restTemplate.postForEntity("http://rating/ratings", ratingRequest, Void.class);
 
 		kafkaTemplate.send("shop", new Operation("create", "payment", objectMapper.valueToTree(new PaymentSucceeded(ratingRequest, paymentRequest))));
 
