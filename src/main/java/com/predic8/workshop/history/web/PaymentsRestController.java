@@ -21,16 +21,17 @@ import java.util.Map;
 @RequestMapping("/payments")
 @RestController
 public class PaymentsRestController {
-	private final ObjectMapper objectMapper;
+
+	private final ObjectMapper mapper;
 	private final Map<String, Payment> payments;
-	private final RestTemplate restTemplate;
-	private final KafkaTemplate<String, Operation> kafkaTemplate;
+	private final RestTemplate rest;
+	private final KafkaTemplate<String, Operation> kafka;
 
 	public PaymentsRestController(ObjectMapper objectMapper, Map<String, Payment> payments, RestTemplate restTemplate, KafkaTemplate<String, Operation> kafkaTemplate) {
-		this.objectMapper = objectMapper;
+		this.mapper = objectMapper;
 		this.payments = payments;
-		this.restTemplate = restTemplate;
-		this.kafkaTemplate = kafkaTemplate;
+		this.rest = restTemplate;
+		this.kafka = kafkaTemplate;
 	}
 
 	@GetMapping("/{uuid}")
@@ -39,12 +40,17 @@ public class PaymentsRestController {
 	}
 
 	@PostMapping("/{uuid}")
-	public ResponseEntity<?> save(@PathVariable String uuid, @RequestBody PaymentRequest paymentRequest) {
+	public ResponseEntity<?> save(@PathVariable String uuid, @RequestBody PaymentRequest request) {
 		// what happens if the HTTP call succeeds but sending the event does not?
 		RatingRequest ratingRequest = new RatingRequest(payments.get(uuid).getCustomer(), payments.get(uuid).getAmount());
-		restTemplate.postForEntity("http://rating/ratings", ratingRequest, Void.class);
+		rest.postForEntity("http://rating/ratings", ratingRequest, Void.class);
 
-		kafkaTemplate.send("shop", new Operation("create", "payment", objectMapper.valueToTree(new PaymentSucceeded(ratingRequest, paymentRequest))));
+
+		Operation op = new Operation("create", "payment", mapper.valueToTree(new PaymentSucceeded(ratingRequest, request)));
+
+		op.logSend();
+
+		kafka.send("shop", op);
 
 		return ResponseEntity.accepted().build();
 	}
