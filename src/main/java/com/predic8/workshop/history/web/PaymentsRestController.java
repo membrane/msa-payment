@@ -1,4 +1,4 @@
-package com.predic8.workshop.history.rest;
+package com.predic8.workshop.history.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.predic8.workshop.history.dto.Payment;
